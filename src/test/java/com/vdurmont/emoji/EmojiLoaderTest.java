@@ -1,7 +1,7 @@
 package com.vdurmont.emoji;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+import static com.fasterxml.jackson.databind.node.JsonNodeFactory.instance;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -23,7 +24,7 @@ public class EmojiLoaderTest {
   @Test
   public void load_empty_database_returns_empty_list() throws IOException {
     // GIVEN
-    byte[] bytes = new JSONArray().toString().getBytes("UTF-8");
+    byte[] bytes = instance.objectNode().toString().getBytes("UTF-8");
     InputStream stream = new ByteArrayInputStream(bytes);
 
     // WHEN
@@ -34,9 +35,9 @@ public class EmojiLoaderTest {
   }
 
   @Test
-  public void buildEmojiFromJSON() throws UnsupportedEncodingException {
+  public void buildEmojiFromJSON() throws IOException {
     // GIVEN
-    JSONObject json = new JSONObject("{"
+    JsonNode json = new ObjectMapper().readTree("{"
       + "\"emoji\": \"😄\","
       + "\"description\": \"smiling face with open mouth and smiling eyes\","
       + "\"aliases\": [\"smile\"],"
@@ -63,9 +64,9 @@ public class EmojiLoaderTest {
 
   @Test
   public void buildEmojiFromJSON_without_description_sets_a_null_description()
-    throws UnsupportedEncodingException {
+          throws IOException {
     // GIVEN
-    JSONObject json = new JSONObject("{"
+    JsonNode json = new ObjectMapper().readTree("{"
       + "\"emoji\": \"😄\","
       + "\"aliases\": [\"smile\"],"
       + "\"tags\": [\"happy\", \"joy\", \"pleased\"]"
@@ -81,9 +82,9 @@ public class EmojiLoaderTest {
 
   @Test
   public void buildEmojiFromJSON_without_unicode_returns_null()
-    throws UnsupportedEncodingException {
+          throws IOException {
     // GIVEN
-    JSONObject json = new JSONObject("{"
+    JsonNode json = new ObjectMapper().readTree("{"
       + "\"aliases\": [\"smile\"],"
       + "\"tags\": [\"happy\", \"joy\", \"pleased\"]"
       + "}");
@@ -97,9 +98,9 @@ public class EmojiLoaderTest {
 
   @Test
   public void buildEmojiFromJSON_computes_the_html_codes()
-    throws UnsupportedEncodingException {
+          throws IOException {
     // GIVEN
-    JSONObject json = new JSONObject("{"
+    JsonNode json = new ObjectMapper().readTree("{"
       + "\"emoji\": \"😄\","
       + "\"description\": \"smiling face with open mouth and smiling eyes\","
       + "\"aliases\": [\"smile\"],"
@@ -118,9 +119,9 @@ public class EmojiLoaderTest {
 
   @Test
   public void buildEmojiFromJSON_with_support_for_fitzpatrick_true()
-    throws UnsupportedEncodingException {
+          throws IOException {
     // GIVEN
-    JSONObject json = new JSONObject("{"
+    JsonNode json = new ObjectMapper().readTree("{"
       + "\"emoji\": \"\uD83D\uDC66\","
       + "\"description\": \"boy\","
       + "\"supports_fitzpatrick\": true,"
@@ -138,9 +139,9 @@ public class EmojiLoaderTest {
 
   @Test
   public void buildEmojiFromJSON_with_support_for_fitzpatrick_false()
-    throws UnsupportedEncodingException {
+          throws IOException {
     // GIVEN
-    JSONObject json = new JSONObject("{"
+    JsonNode json = new ObjectMapper().readTree("{"
       + "\"emoji\": \"\uD83D\uDE15\","
       + "\"description\": \"confused face\","
       + "\"supports_fitzpatrick\": false,"
@@ -158,9 +159,9 @@ public class EmojiLoaderTest {
 
   @Test
   public void buildEmojiFromJSON_without_support_for_fitzpatrick()
-    throws UnsupportedEncodingException {
+          throws IOException {
     // GIVEN
-    JSONObject json = new JSONObject("{"
+    JsonNode json = new ObjectMapper().readTree("{"
       + "\"emoji\": \"\uD83D\uDE15\","
       + "\"description\": \"confused face\","
       + "\"aliases\": [\"confused\"],"
